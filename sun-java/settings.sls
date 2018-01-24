@@ -17,6 +17,7 @@
 {%- set default_jce_hash     = 'sha256=f3020a3922efd6626c2fff45695d527f34a8020e938a49292561f18ad1320b59' %}
 {%- set default_dl_opts      = '-b oraclelicense=accept-securebackup-cookie -L -s' %}
 {%- set default_symlink      = '/usr/bin/java' %}
+{%- set default_use_curl     = True %}
 
 {%- set default_version_name = 'jdk1.' + release + '.' + major + '_' + minor %}
 {%- set archive_type         = g.get('archive_type', p.get('archive_type', 'tar' )) %}
@@ -38,6 +39,7 @@
 {%- endif %}
 
 {%- set dl_opts              = g.get('dl_opts', p.get('dl_opts', default_dl_opts)) %}
+{%- set use_curl             = g.get('use_curl', p.get('use_curl', default_use_curl)) %}
 {%- set prefix               = g.get('prefix', p.get('prefix', default_prefix)) %}
 {%- set java_real_home       = prefix + '/' + version_name %}
 {%- set jre_lib_sec          = java_real_home + '/jre/lib/security' %}
@@ -54,6 +56,7 @@
                       'jce_url'        : jce_url,
                       'jce_hash'       : jce_hash,
                       'dl_opts'        : dl_opts,
+                      'use_curl'       : use_curl,
                       'java_home'      : java_home,
                       'prefix'         : prefix,
                       'java_real_home' : java_real_home,

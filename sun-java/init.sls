@@ -23,13 +23,20 @@ sun-java-remove-prev-archive:
       - file: java-install-dir
 
 download-jdk-archive:
+  {%- if java.use_curl %}
   cmd.run:
     - name: curl {{ java.dl_opts }} -o '{{ archive_file }}' '{{ java.source_url }}'
+  {%- else %}
+  file.managed:
+    - name: '{{ archive_file }}'
+    - source: '{{ java.source_url }}'
+    - source_hash: '{{ java.source_hash }}'
+  {%- endif %}
     - unless: test -f {{ java.java_realcmd }}
     - require:
       - file: sun-java-remove-prev-archive
 
-  {%- if java.source_hash %}
+  {%- if java.use_curl and java.source_hash %}
 
 # FIXME: We need to check hash sum separately, because
 # ``archive.extracted`` state does not support integrity verification
@@ -58,8 +65,12 @@ unpack-jdk-archive:
     - group: root
     - if_missing: {{ java.java_realcmd }}
     - onchanges:
+  {%- if java.use_curl %}
       - cmd: download-jdk-archive
-
+  {%- else %}
+      - file: download-jdk-archive
+  {%- endif %}
+  
 update-javahome-symlink:
   file.symlink:
     - name: {{ java.java_home }}

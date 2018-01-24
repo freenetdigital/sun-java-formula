@@ -21,9 +21,16 @@ sun-java-remove-old-jce-archive:
       - pkg: sun-java-jce-unzip 
 
 download-jce-archive:
+  {%- if java.use_curl %}
   cmd.run:
     - name: curl {{ java.dl_opts }} -o '{{ zip_file }}' '{{ java.jce_url }}'
     - creates: {{ zip_file }}
+  {%- else %}
+  file.managed:
+    - name: '{{ zip_file }}'
+    - source: '{{ java.jce_url }}'
+    - source_hash: '{{ java.jce_hash }}'
+  {%- endif %}
     - onlyif: >
         test ! -f {{ policy_jar }} ||
         test ! -f {{ policy_jar_bak }}
@@ -36,7 +43,7 @@ download-jce-archive:
 #
 # See: https://github.com/saltstack/salt/pull/41914
 
-  {%- if java.jce_hash %}
+  {%- if java.use_curl and java.jce_hash %}
 
 check-jce-archive:
   module.run:
@@ -64,7 +71,11 @@ unpack-jce-archive:
     - creates: {{ policy_jar }}
     - require:
       - pkg: unzip
+  {%- if java.use_curl %}
       - cmd: download-jce-archive
+  {%- else %}
+      - file: download-jce-archive
+  {%- endif %}
       - cmd: backup-non-jce-jar
 
 remove-jce-archive:

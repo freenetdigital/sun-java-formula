@@ -11,6 +11,9 @@ java:
   # Increase same value on each subsequent software installation.
   # alt_priority: 301800111
 
+  # Set to False if you want to host the files yourself (allows using salt:// URLs)
+  use_curl: True
+
   ## JDK ##
   version_name: jdk1.8.0_152
   source_url: http://download.oracle.com/otn-pub/java/jdk/8u152-b16/aa0333dd3019491ca4f6ddbe78cdb6d0/jdk-8u152-linux-x64.tar.gz
